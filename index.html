@@ -326,7 +326,7 @@
         <div class="logo" aria-hidden="true"></div>
         <div>
           <h1>Concentrix HCM Tuyển dụng</h1>
-          <p>Recruiter: Minh Hieu • Zalo/Phone: 0349865229</p>
+          <p>Recruiter: Minh Hieu • Zalo/Phone: 0349865229 • Email: minhhieupk02.ta@gmail.com</p>
         </div>
       </div>
 
@@ -364,6 +364,15 @@
         </svg>
       </a>
     </div>
+<div class="float-wrap">
+  <div class="float-label">Gửi email</div>
+  <a class="float-btn" href="mailto:minhhieupk02.ta@gmail.com" aria-label="Gửi email">
+    <svg viewBox="0 0 24 24" fill="none">
+      <path d="M4 7.5A2.5 2.5 0 016.5 5h11A2.5 2.5 0 0120 7.5v9A2.5 2.5 0 0117.5 19h-11A2.5 2.5 0 014 16.5v-9z" stroke="#003D5B" stroke-width="1.8"/>
+      <path d="M5.5 7.5l6.5 5 6.5-5" stroke="#003D5B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </a>
+</div>
 
     <div class="float-wrap">
       <div class="float-label">Gọi nhanh</div>
@@ -386,7 +395,8 @@
 
 <script>
   const RECRUITER_NAME = "Minh Hieu";
-  const PHONE = "0349865229";
+const PHONE = "0349865229";
+const EMAIL = "minhhieupk02.ta@gmail.com";
   const FORM_URL = "https://forms.gle/AG3NxdTm3QW7MddE9";
 
   const JOBS = [
@@ -646,10 +656,12 @@
           <div class="section-title" style="margin-top:0">Liên hệ nhanh</div>
           <div class="muted">Recruiter: <b>${escapeHtml(RECRUITER_NAME)}</b></div>
           <div class="muted" style="margin-top:8px">Zalo/Phone: <b>${escapeHtml(PHONE)}</b></div>
+          <div class="muted" style="margin-top:6px">Email: <b><a href="mailto:${escapeHtml(EMAIL)}">${escapeHtml(EMAIL)}</a></b></div>
           <div class="actions" style="margin-top:12px">
-            <button class="btn secondary" onclick="copy('${PHONE}')">Copy số</button>
-            <button class="btn" onclick="go('#/apply')">Mở trang Apply</button>
-          </div>
+  <button class="btn secondary" onclick="copy('${PHONE}')">Copy số</button>
+  <button class="btn secondary" onclick="copy('${EMAIL}')">Copy email</button>
+  <button class="btn" onclick="go('#/apply')">Mở trang Apply</button>
+</div>
           <div class="hr"></div>
           <div class="small">Nguồn: <b>${escapeHtml(state.src)}</b></div>
           <div class="small" style="margin-top:8px">Lưu ý: Form có tải CV nên Google có thể yêu cầu đăng nhập.</div>
@@ -1055,4 +1067,5 @@ Nhờ anh/chị hỗ trợ sắp lịch screening/PV giúp em ạ.`;
 </script>
 </body>
 </html>
+
 
