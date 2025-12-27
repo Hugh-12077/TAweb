@@ -223,9 +223,9 @@
     }
     html[data-theme="light"] .card{ box-shadow: 0 8px 20px rgba(17,24,39,.06); }
     .card:hover{
-      transform: translateY(-3px);
+      transform: translateY(-2px);
       box-shadow: 0 18px 55px rgba(0,0,0,.35);
-      border-color: rgba(37,226,204,.28);
+      border-color: rgba(37,226,204,.35);
     }
     html[data-theme="light"] .card:hover{ box-shadow: 0 16px 40px rgba(0,0,0,.10); }
 
@@ -356,10 +356,51 @@
     .hidden{display:none !important}
 
     .modal-backdrop{
-      position:fixed;inset:0;background:rgba(0,0,0,.55);
-      display:none;align-items:center;justify-content:center;
-      padding:16px;z-index:200;
-    }
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.55);
+  display: flex;                 /* luôn flex để animate */
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 200;
+
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity .18s ease, visibility 0s linear .18s;
+}
+
+.modal-backdrop.open{
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition: opacity .18s ease;
+}
+
+.modal{
+  max-width: 720px; width:100%;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 14px;
+
+  transform: translateY(10px) scale(.985);
+  opacity: 0;
+  transition: transform .18s ease, opacity .18s ease;
+}
+
+.modal-backdrop.open .modal{
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+/* tôn trọng người dùng giảm chuyển động */
+@media (prefers-reduced-motion: reduce){
+  .modal-backdrop, .modal { transition: none !important; }
+}
+
     .modal{
       max-width:720px;width:100%;
       background: var(--panel);
@@ -1027,9 +1068,18 @@
         <button class="btn secondary" onclick="hideModal()">Đóng</button>
       </div>
     `;
-    $("#modalBackdrop").style.display = "flex";
-  }
-  function hideModal(){ $("#modalBackdrop").style.display = "none"; }
+    const bd = $("#modalBackdrop");
+bd.classList.add("open");
+document.body.style.overflow = "hidden";
+function hideModal(){
+  const bd = $("#modalBackdrop");
+  bd.classList.remove("open");
+  document.body.style.overflow = "";
+}
+window.addEventListener("keydown", (e)=>{
+  if(e.key === "Escape") hideModal();
+});
+
   function closeModal(e){ if(e.target.id==="modalBackdrop") hideModal(); }
 
   function setFilter(key, value){ state.filters[key]=value; render(); }
@@ -1136,12 +1186,12 @@ Nhờ anh/chị hỗ trợ sắp lịch screening/PV giúp em ạ.`;
     const logo = document.getElementById("cxLogo");
     if(logo){
       // FIX: Dark theme -> dùng logo LIGHT; Light theme -> dùng logo DARK
-      logo.src = (theme === "dark")
-  ? "assets/cnx-logo-light.svg"   // nền tối -> logo sáng
-  : "assets/cnx-logo-dark.svg";   // nền sáng -> logo tối
-const src = (theme === "dark")
-  ? "assets/cnx-logo-light.svg"
-  : "assets/cnx-logo-dark.svg";
+      const src = (theme === "dark")
+  ? "assets/cnx-logo-light.svg"  // nền tối -> logo sáng
+  : "assets/cnx-logo-dark.svg";  // nền sáng -> logo tối
+
+logo.src = src + "?t=" + theme;  // thêm để né cache
+
 
 logo.src = src + "?t=" + theme;
 
@@ -1231,4 +1281,5 @@ logo.src = src + "?t=" + theme;
 </script>
 </body>
 </html>
+
 
