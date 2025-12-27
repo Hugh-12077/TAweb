@@ -1290,24 +1290,24 @@ Nhờ anh/chị hỗ trợ sắp lịch screening/PV giúp em ạ.`;
   }
 
  
+  
   function applyTheme(theme){
     document.documentElement.dataset.theme = theme;
 
-    // Đổi chữ nút theme
     const btn = document.getElementById("themeToggle");
     if(btn) btn.textContent = (theme === "dark") ? "Light" : "Dark";
 
-    // Đổi logo theo theme (đúng tương phản)
     const logo = document.getElementById("cxLogo");
     if(logo){
-      // Dark theme -> dùng logo chữ sáng (cnx-logo-light.svg)
-      // Light theme -> dùng logo chữ tối (cnx-logo-dark.svg)
+      // Dark theme -> logo chữ sáng
+      // Light theme -> logo chữ tối
       logo.src = (theme === "dark")
-        ? "assets/cnx-logo-light.svg"
-        : "assets/cnx-logo-dark.svg";
-      logo.alt = "Concentrix";
+        ? "assets/cnx-logo-dark.svg"
+        : "assets/cnx-logo-light.svg";
     }
   }
+
+
 
   function initTheme(){
     // chỉ dùng 1 key thống nhất
@@ -1378,6 +1378,7 @@ Nhờ anh/chị hỗ trợ sắp lịch screening/PV giúp em ạ.`;
 </script>
 </body>
 </html>
+
 
 
 
