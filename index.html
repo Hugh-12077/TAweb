@@ -475,8 +475,8 @@
     <div class="topbar-inner container">
       <div class="brand" onclick="go('#/')" style="cursor:pointer">
         <div class="brandmark">
-          <!-- IMPORTANT: dark theme dùng logo LIGHT -->
-          <img id="cxLogo" src="assets/cnx-logo-light.svg" alt="Concentrix" />
+          <!-- Logo sẽ được JS đổi theo theme; src ban đầu để tránh flash -->
+          <img id="cxLogo" src="assets/cnx-logo-dark.svg" alt="Concentrix" />
         </div>
         <div>
           <h1>Concentrix HCM Tuyển dụng</h1>
@@ -1071,18 +1071,19 @@
     const bd = $("#modalBackdrop");
 bd.classList.add("open");
 document.body.style.overflow = "hidden";
+}
+
 function hideModal(){
   const bd = $("#modalBackdrop");
   bd.classList.remove("open");
   document.body.style.overflow = "";
 }
-window.addEventListener("keydown", (e)=>{
-  if(e.key === "Escape") hideModal();
-});
 
-  function closeModal(e){ if(e.target.id==="modalBackdrop") hideModal(); }
-
-  function setFilter(key, value){ state.filters[key]=value; render(); }
+function closeModal(e){
+  // chỉ đóng khi click vào nền (backdrop)
+  if(e && e.target && e.target.id === "modalBackdrop") hideModal();
+}
+function setFilter(key, value){ state.filters[key]=value; render(); }
   function resetFilters(){ state.filters={loc:"all", english:"all", schedule:"all"}; render(); }
 
   function selectAndApply(id){
@@ -1185,16 +1186,16 @@ Nhờ anh/chị hỗ trợ sắp lịch screening/PV giúp em ạ.`;
 
     const logo = document.getElementById("cxLogo");
     if(logo){
-      // FIX: Dark theme -> dùng logo LIGHT; Light theme -> dùng logo DARK
-      const src = (theme === "dark")
-  ? "assets/cnx-logo-light.svg"  // nền tối -> logo sáng
-  : "assets/cnx-logo-dark.svg";  // nền sáng -> logo tối
+      // Bạn đang dùng 2 file:
+      // - assets/cnx-logo-light.svg: logo chữ MÀU ĐẬM (hợp nền sáng)
+      // - assets/cnx-logo-dark.svg : logo chữ MÀU SÁNG (hợp nền tối)
+      const LOGO_FOR_LIGHT_THEME = "assets/cnx-logo-light.svg";
+      const LOGO_FOR_DARK_THEME  = "assets/cnx-logo-dark.svg";
+      const src = (theme === "dark") ? LOGO_FOR_DARK_THEME : LOGO_FOR_LIGHT_THEME;
 
-logo.src = src + "?t=" + theme;  // thêm để né cache
-
-
-logo.src = src + "?t=" + theme;
-
+      // thêm query để tránh cache khi đổi theme
+      logo.src = src + "?v=" + theme;
+      logo.alt = "Concentrix";
     }
   }
 
@@ -1273,6 +1274,9 @@ logo.src = src + "?t=" + theme;
   window.addEventListener("hashchange", route);
   window.addEventListener("load", ()=>{
     initTheme();
+
+    // ESC để đóng popup job (Xem chi tiết)
+    window.addEventListener("keydown", (e)=>{ if(e.key === "Escape") hideModal(); });
     const url = new URL(location.href);
     const job = url.searchParams.get("job");
     if(job && JOBS.some(j=>j.id===job)) setSelectedJob(job);
