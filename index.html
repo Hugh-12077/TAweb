@@ -22,6 +22,16 @@
     })();
   </script>
 
+  <!-- Google tag (gtag.js) - GA4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-1QXN815SQE"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    // Hash-based router (#/jobs, #/apply, ...) => send page_view thủ công trong JS (cxTrackPageView)
+    gtag('config', 'G-1QXN815SQE', { send_page_view: false });
+  </script>
+
   <style>
     :root{
       --cx-blue:#003D5B;
@@ -751,6 +761,43 @@
 
   const state = { src: "website", selectedJobId: null, filters: { loc: "all", schedule: "all" }, qaSearch: "" };
 
+  // ---- GA4 tracking helpers (page views + apply events) ----
+  // Lưu ý: GA4 sẽ thấy được parameter như cx_src/job_id/method trong DebugView.
+  // Nếu muốn dùng trong report mặc định, bạn tạo Custom definitions trong GA4.
+  let cxLastPagePath = "";
+
+  function cxSrc(){
+    return state.src || localStorage.getItem("cx_src") || "website";
+  }
+
+  function cxTrack(eventName, params){
+    if(typeof gtag !== "function") return;
+    try{
+      gtag("event", eventName, params || {});
+    }catch(_e){}
+  }
+
+  function cxTrackPageView(){
+    const page_path = location.pathname + location.search + location.hash;
+    if(page_path === cxLastPagePath) return; // chống bắn trùng khi render lại
+    cxLastPagePath = page_path;
+
+    cxTrack("page_view", {
+      page_title: document.title,
+      page_location: location.href,
+      page_path,
+      cx_src: cxSrc()
+    });
+  }
+
+  function cxTrackApply(jobId, method){
+    cxTrack("apply_click", {
+      job_id: jobId || state.selectedJobId || "unknown",
+      method: method || "unknown",
+      cx_src: cxSrc()
+    });
+  }
+
   function $(sel){ return document.querySelector(sel); }
   function escapeHtml(s){
     return (s||"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
@@ -1170,7 +1217,9 @@ function setFilter(key, value){ state.filters[key]=value; render(); }
   }
 
   function openForm(jobId){
-    const url = getFormUrl(jobId || state.selectedJobId);
+    const id = jobId || state.selectedJobId;
+    cxTrackApply(id, "form");
+    const url = getFormUrl(id);
     window.open(url, "_blank", "noopener,noreferrer");
   }
 
@@ -1223,6 +1272,7 @@ function setFilter(key, value){ state.filters[key]=value; render(); }
     const fd = new FormData(e.target);
     const jobId = fd.get("jobId");
     const job = JOBS.find(j=>j.id===jobId);
+    cxTrackApply(jobId, "quick_apply");
 
     const name = (fd.get("name")||"").toString().trim();
     const phone = (fd.get("phone")||"").toString().trim();
@@ -1353,6 +1403,8 @@ Nhờ anh/chị hỗ trợ sắp lịch screening/PV giúp em ạ.`;
         if(sel) onQuickJobChange(sel.value);
       }
     });
+
+    cxTrackPageView();
   }
 
   function render(){ route(); }
